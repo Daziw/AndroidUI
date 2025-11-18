@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 基础颜色 -->
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#1976D2</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <!-- 背景颜色 -->
+    <color name="background_light">#FAFAFA</color>
+    <color name="background_dark">#263238</color>
+    <color name="note_background">#FFFFFF</color>
+    <color name="editor_background">#F5F5F5</color>
+
+    <!-- 文本颜色 -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_hint">#BDBDBD</color>
+
+    <!-- 分类标签颜色 -->
+    <color name="category_work">#FF9800</color>
+    <color name="category_personal">#2196F3</color>
+    <color name="category_ideas">#9C27B0</color>
+    <color name="category_study">#4CAF50</color>
+    <color name="category_uncategorized">#607D8B</color>
+</resources>

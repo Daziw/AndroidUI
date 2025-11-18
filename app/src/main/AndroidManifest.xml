@@ -24,14 +24,17 @@
 
     <application android:icon="@drawable/app_notes"
         android:label="@string/app_name"
-    >
+        >
         <provider android:name="NotePadProvider"
             android:authorities="com.google.provider.NotePad"
-            android:exported="true">
+            android:exported="false">
             <grant-uri-permission android:pathPattern=".*" />
         </provider>
 
-        <activity android:name="NotesList" android:label="@string/title_notes_list">
+        <!-- NotesList Activity - 这是主启动器，需要 exported="true" -->
+        <activity android:name="NotesList"
+            android:label="@string/title_notes_list"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -50,11 +53,12 @@
             </intent-filter>
         </activity>
 
+        <!-- NoteEditor Activity - 可以被其他应用调用，需要 exported="true" -->
         <activity android:name="NoteEditor"
             android:theme="@android:style/Theme.Holo.Light"
             android:screenOrientation="sensor"
             android:configChanges="keyboardHidden|orientation"
-        >
+            android:exported="true">
             <!-- This filter says that we can view or edit the data of
                  a single note -->
             <intent-filter android:label="@string/resolve_edit">
@@ -75,14 +79,15 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="vnd.android.cursor.dir/vnd.google.note" />
             </intent-filter>
-
         </activity>
 
+        <!-- TitleEditor Activity - 可以被其他应用调用，需要 exported="true" -->
         <activity android:name="TitleEditor"
             android:label="@string/title_edit_title"
             android:icon="@drawable/ic_menu_edit"
             android:theme="@android:style/Theme.Holo.Dialog"
-            android:windowSoftInputMode="stateVisible">
+            android:windowSoftInputMode="stateVisible"
+            android:exported="true">
             <!-- This activity implements an alternative action that can be
                  performed on notes: editing their title.  It can be used as
                  a default operation if the user invokes this action, and is
@@ -105,8 +110,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="NotesLiveFolder" android:label="@string/live_folder_name"
-            android:icon="@drawable/live_folder_notes">
+        <!-- NotesLiveFolder Activity - 可以被其他应用调用，需要 exported="true" -->
+        <activity android:name="NotesLiveFolder"
+            android:label="@string/live_folder_name"
+            android:icon="@drawable/live_folder_notes"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.CREATE_LIVE_FOLDER" />
                 <category android:name="android.intent.category.DEFAULT" />

@@ -4,9 +4,9 @@
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
      You may obtain a copy of the License at
-  
+
           http://www.apache.org/licenses/LICENSE-2.0
-  
+
      Unless required by applicable law or agreed to in writing, software
      distributed under the License is distributed on an "AS IS" BASIS,
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,4 +40,26 @@
     <string name="error_title">Error</string>
     <string name="error_message">Error loading note</string>
     <string name="nothing_to_save">There is nothing to save</string>
+
+    <!-- 新增分类相关字符串 -->
+    <string name="menu_search">搜索</string>
+    <string name="menu_category">分类筛选</string>
+    <string name="search_hint">搜索笔记标题</string>
+    <string name="category_dialog_title">选择分类</string>
+    <string name="category_label">分类</string>
+    <string name="category_uncategorized">未分类</string>
+    <string name="category_all">所有笔记</string>
+    <string name="category_work">工作</string>
+    <string name="category_personal">个人</string>
+    <string name="category_ideas">想法</string>
+    <string name="category_study">学习</string>
+
+    <!-- 分类数组 -->
+    <string-array name="categories_array">
+        <item>未分类</item>
+        <item>工作</item>
+        <item>个人</item>
+        <item>想法</item>
+        <item>学习</item>
+    </string-array>
 </resources>
