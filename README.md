@@ -4,15 +4,15 @@
 ## 一、初始应用功能
 
 ### 1. 新建笔记和编辑笔记
-(1) 在主界面点击添加按钮，新建笔记并进入编辑界面
+(1) 在主界面点击添加按钮
 (2) 进入笔记编辑界面后，可进行笔记内容编辑
+<p><img width="381" height="201" alt="4b9b1f94f30e80ec7fffa0209c3aa821" src="https://github.com/user-attachments/assets/b6022b0b-6605-407c-be58-c5778b198547" />
+</p>
 
 ### 2. 编辑标题
-(1) 在笔记编辑界面中点击菜单，选择"Edit title"
-(2) 点击"Edit title"，可编辑笔记标题
-
-### 3. 笔记列表
-在进行笔记的新建和编辑后，在主界面中呈现笔记列表，每个条目显示笔记标题
+(1) 在笔记编辑界面中点击即可输入
+<p><img width="384" height="266" alt="e2f87bc25b922469879f139d6c025911" src="https://github.com/user-attachments/assets/c571acbc-423a-4cd5-88a9-af9a47421da9" />
+</p>
 
 ---
 
@@ -116,6 +116,8 @@ private String formatTimestamp(long timestamp) {
 
 #### 1. 功能要求
 支持按标题和内容搜索笔记，实时显示搜索结果
+<p><img width="384" height="127" alt="image" src="https://github.com/user-attachments/assets/698c979d-0696-4052-8dc4-5952f2ef97b9" />
+</p>
 
 #### 2. 实现思路和技术实现
 (1) 在菜单中添加搜索功能
@@ -163,7 +165,12 @@ searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 ### （三）笔记分类功能
 
 #### 1. 功能要求
-为笔记添加分类功能，支持按分类筛选和显示
+为笔记添加分类功能，支持按分类筛选和显示并且编辑页面也实现选择分类
+<p><img width="379" height="79" alt="e47f5b9861b93529c0bc3553be42e72a" src="https://github.com/user-attachments/assets/ade7c2ef-cddc-47e9-a5d3-f1fa3fefb286" />
+</p>
+
+<p><img width="367" height="294" alt="6e8189a3-2861-426a-a340-726520e11522" src="https://github.com/user-attachments/assets/a01aa7c4-1c2f-4946-8a05-e6699f9de79f" />
+</p>
 
 #### 2. 实现思路和技术实现
 (1) 在数据库中添加分类字段
@@ -263,43 +270,38 @@ private void setCategoryColor(TextView categoryView, String category) {
 ```
 
 ### 3. 编辑器美化
-- 优化编辑器背景和线条颜色
+- 优化编辑器背景和线条颜色并做旧背景
 - 改进字体大小和行间距
 - 更好的视觉层次
+```xml
+    <!-- 分类选择行 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:background="#FFE8D4A8"
+        android:gravity="center_vertical"
+        android:layout_margin="8dp">
 
-### 4. 整体视觉改进
-- 统一的颜色主题
-- 协调的间距和排版
-- 现代化的图标和交互元素
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📁 分类:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#5D4037"
+            android:paddingRight="8dp" />
 
----
+        <Spinner
+            android:id="@+id/category_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#FFF5E6C2"
+            android:padding="8dp" />
 
-## 四、技术特点
+    </LinearLayout>
+```
 
-### 1. 数据库设计
-- 使用SQLite数据库存储笔记数据
-- 支持时间戳、分类等扩展字段
-- 数据库版本升级支持
 
-### 2. 内容提供器
-- 实现ContentProvider管理数据
-- 支持数据共享和URI操作
-- 完整的数据CRUD操作
-
-### 3. UI组件
-- 使用ListActivity显示笔记列表
-- SimpleCursorAdapter绑定数据
-- SearchView实现实时搜索
-- Spinner实现分类选择
-
-### 4. 用户体验
-- 实时搜索和筛选
-- 直观的分类显示
-- 流畅的编辑体验
-- 现代化的界面设计
-
----
-
-## 五、总结
-
-本NotePad应用在原始基础上进行了全面升级，增加了时间戳显示、搜索功能、分类管理等实用功能，同时进行了现代化的UI美化，提供了更好的用户体验。应用采用标准的Android开发模式，具有良好的扩展性和维护性。
