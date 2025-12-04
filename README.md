@@ -6,7 +6,7 @@
 ### 1. 新建笔记和编辑笔记
 (1) 在主界面点击添加按钮
 (2) 进入笔记编辑界面后，可进行笔记内容编辑
-<p><img width="381" height="201" alt="4b9b1f94f30e80ec7fffa0209c3aa821" src="https://github.com/user-attachments/assets/b6022b0b-6605-407c-be58-c5778b198547" />
+<p><img width="385" height="135" alt="d23fef98d62666325586b3485f2d8b2b" src="https://github.com/user-attachments/assets/20f7e9e4-2f3b-4821-809a-cf49b627e14e" />
 </p>
 
 ### 2. 编辑标题
@@ -116,7 +116,8 @@ private String formatTimestamp(long timestamp) {
 
 #### 1. 功能要求
 支持按标题和内容搜索笔记，实时显示搜索结果
-<p><img width="384" height="127" alt="image" src="https://github.com/user-attachments/assets/698c979d-0696-4052-8dc4-5952f2ef97b9" />
+<p><img width="379" height="124" alt="image" src="https://github.com/user-attachments/assets/f3078f16-2e7f-4d07-aee5-79808176c9f2" />
+
 </p>
 
 #### 2. 实现思路和技术实现
@@ -166,8 +167,7 @@ searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
 #### 1. 功能要求
 为笔记添加分类功能，支持按分类筛选和显示并且编辑页面也实现选择分类
-<p><img width="379" height="79" alt="e47f5b9861b93529c0bc3553be42e72a" src="https://github.com/user-attachments/assets/ade7c2ef-cddc-47e9-a5d3-f1fa3fefb286" />
-</p>
+
 
 <p><img width="367" height="294" alt="6e8189a3-2861-426a-a340-726520e11522" src="https://github.com/user-attachments/assets/a01aa7c4-1c2f-4946-8a05-e6699f9de79f" />
 </p>
@@ -196,38 +196,127 @@ db.execSQL("CREATE TABLE " + NotePad.Notes.TABLE_NAME + " ("
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp"
-    android:background="#f5f5f5"
-    android:gravity="center_vertical">
+    android:padding="12dp"
+    android:background="#FFE8D4A8"
+    android:gravity="center_vertical"
+    android:layout_margin="8dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="分类:"
+        android:text="📁 分类:"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:textColor="#5D4037"
         android:paddingRight="8dp" />
 
     <Spinner
         android:id="@+id/category_spinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:background="#FFF5E6C2"
+        android:padding="8dp" />
 
 </LinearLayout>
 ```
 
-(3) 实现分类筛选
+(3) 实现分类筛选功能
 ```java
-private void showCategoryDialog() {
-    final String[] categories = {"所有", "工作", "个人", "想法", "学习", "未分类"};
-    // 显示分类选择对话框
+// 在菜单中添加分类筛选选项
+@Override
+public boolean onCreateOptionsMenu(Menu menu) {
+    // 添加分类筛选菜单项
+    MenuItem filterItem = menu.add(0, MENU_ITEM_FILTER, 1, "📂 按分类筛选");
+    filterItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    
+    // 添加子菜单项
+    SubMenu filterSubMenu = menu.addSubMenu("📂 按分类筛选");
+    filterSubMenu.add(0, FILTER_ALL, 0, "📋 所有笔记");
+    filterSubMenu.add(0, FILTER_WORK, 1, "💼 工作");
+    filterSubMenu.add(0, FILTER_PERSONAL, 2, "🏠 个人");
+    filterSubMenu.add(0, FILTER_IDEA, 3, "💡 想法");
+    filterSubMenu.add(0, FILTER_STUDY, 4, "📚 学习");
+    filterSubMenu.add(0, FILTER_UNCATEGORIZED, 5, "❓ 未分类");
+    
+    return super.onCreateOptionsMenu(menu);
+}
+
+// 处理分类筛选选择
+@Override
+public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+        case FILTER_ALL:
+            mCurrentCategory = null;
+            break;
+        case FILTER_WORK:
+            mCurrentCategory = "工作";
+            break;
+        case FILTER_PERSONAL:
+            mCurrentCategory = "个人";
+            break;
+        case FILTER_IDEA:
+            mCurrentCategory = "想法";
+            break;
+        case FILTER_STUDY:
+            mCurrentCategory = "学习";
+            break;
+        case FILTER_UNCATEGORIZED:
+            mCurrentCategory = "未分类";
+            break;
+    }
+    refreshList(); // 刷新列表显示筛选结果
+    return true;
+}
+```
+
+(4) 更新查询逻辑以支持分类筛选
+```java
+private Cursor getFilteredCursor() {
+    String selection = null;
+    String[] selectionArgs = null;
+    List<String> selectionList = new ArrayList<>();
+    List<String> argsList = new ArrayList<>();
+
+    // 搜索条件
+    if (!TextUtils.isEmpty(mCurrentSearchQuery)) {
+        selectionList.add("(" + NotePad.Notes.COLUMN_NAME_TITLE + " LIKE ? OR " + 
+                         NotePad.Notes.COLUMN_NAME_NOTE + " LIKE ?)");
+        String searchArg = "%" + mCurrentSearchQuery + "%";
+        argsList.add(searchArg);
+        argsList.add(searchArg);
+    }
+
+    // 分类筛选条件
+    if (mCurrentCategory != null) {
+        if ("未分类".equals(mCurrentCategory)) {
+            selectionList.add(NotePad.Notes.COLUMN_NAME_CATEGORY + " IS NULL OR " + 
+                            NotePad.Notes.COLUMN_NAME_CATEGORY + " = ?");
+        } else {
+            selectionList.add(NotePad.Notes.COLUMN_NAME_CATEGORY + " = ?");
+        }
+        argsList.add(mCurrentCategory);
+    }
+
+    // 组合所有条件
+    if (!selectionList.isEmpty()) {
+        selection = TextUtils.join(" AND ", selectionList);
+        selectionArgs = argsList.toArray(new String[0]);
+    }
+
+    return getContentResolver().query(
+        getIntent().getData(),
+        PROJECTION,
+        selection,
+        selectionArgs,
+        NotePad.Notes.DEFAULT_SORT_ORDER
+    );
 }
 ```
 
 #### 3. 实现效果
-- 在编辑笔记时可选择分类
-- 支持按分类筛选笔记
+- 在编辑笔记时可选择分类，使用复古风格的图标和配色
+- 支持按分类筛选笔记，菜单项带有相应图标
 - 分类标签在列表中彩色显示
 
 ---
@@ -239,25 +328,32 @@ private void showCategoryDialog() {
 - Material Design配色方案
 - 优化的间距和字体大小
 
-### 2. 动态分类颜色
+### 2. 动态分类颜色和图标系统
 ```java
-private void setCategoryColor(TextView categoryView, String category) {
+private void setCategoryColorAndIcon(TextView categoryView, String category) {
     int color;
+    String icon;
+    
     switch (category) {
         case "工作":
             color = 0xFFFF9800; // 橙色
+            icon = "💼";
             break;
         case "个人":
             color = 0xFF2196F3; // 蓝色
+            icon = "🏠";
             break;
         case "想法":
             color = 0xFF9C27B0; // 紫色
+            icon = "💡";
             break;
         case "学习":
             color = 0xFF4CAF50; // 绿色
+            icon = "📚";
             break;
         default:
             color = 0xFF607D8B; // 灰色
+            icon = "❓";
             break;
     }
     
@@ -265,43 +361,205 @@ private void setCategoryColor(TextView categoryView, String category) {
     GradientDrawable drawable = new GradientDrawable();
     drawable.setColor(color);
     drawable.setCornerRadius(12f);
+    drawable.setStroke(1, color & 0x80FFFFFF); // 添加半透明边框
+    
+    // 设置文本和样式
+    categoryView.setText(icon + " " + category);
     categoryView.setBackground(drawable);
+    categoryView.setTextColor(Color.WHITE);
+    categoryView.setPadding(8, 4, 8, 4);
+    categoryView.setTypeface(categoryView.getTypeface(), Typeface.BOLD);
 }
 ```
 
-### 3. 编辑器美化
-- 优化编辑器背景和线条颜色并做旧背景
-- 改进字体大小和行间距
-- 更好的视觉层次
+### 3. 编辑器美化和复古主题
+(1) 编辑器界面美化
 ```xml
-    <!-- 分类选择行 -->
+<!-- 复古风格的背景 -->
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/vintage_background">
+
+    <!-- 标题输入区域 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        android:background="#FFE8D4A8"
-        android:gravity="center_vertical"
-        android:layout_margin="8dp">
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#FFFAF3E0">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <!-- 标题输入框 -->
+        <EditText
+            android:id="@+id/title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="📁 分类:"
-            android:textSize="16sp"
+            android:hint="✏️ 笔记标题"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#5D4037"
-            android:paddingRight="8dp" />
+            android:background="@drawable/vintage_edittext"
+            android:padding="12dp"
+            android:textColor="#5D4037" />
 
-        <Spinner
-            android:id="@+id/category_spinner"
-            android:layout_width="0dp"
+        <!-- 分类选择行（已在前文展示） -->
+        
+        <!-- 内容输入区域 -->
+        <EditText
+            android:id="@+id/note"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="#FFF5E6C2"
-            android:padding="8dp" />
+            android:gravity="top"
+            android:hint="📝 开始记录..."
+            android:background="@drawable/vintage_textarea"
+            android:padding="16dp"
+            android:textSize="16sp"
+            android:minHeight="300dp"
+            android:textColor="#4E342E"
+            android:lineSpacingExtra="4dp" />
 
     </LinearLayout>
+</ScrollView>
 ```
 
+(2) 复古背景和边框资源
+```xml
+<!-- res/drawable/vintage_background.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FFF5E6C2" />
+    <stroke android:width="1dp" android:color="#E0C9A6" />
+</shape>
 
+<!-- res/drawable/vintage_edittext.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FFF9F4E9" />
+    <corners android:radius="8dp" />
+    <stroke android:width="2dp" android:color="#D7CCC8" />
+    <padding android:left="8dp" android:top="8dp" android:right="8dp" android:bottom="8dp" />
+</shape>
+
+<!-- res/drawable/vintage_textarea.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FFFCF8F0" />
+    <corners android:radius="12dp" />
+    <stroke android:width="3dp" android:color="#BCAAA4" />
+    <padding android:left="12dp" android:top="12dp" android:right="12dp" android:bottom="12dp" />
+</shape>
+```
+
+(3) 主界面列表项美化
+```xml
+<!-- 列表项卡片式布局 -->
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:cardUseCompatPadding="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#FFFAF3E0">
+
+        <!-- 标题行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- 标题图标和文本 -->
+            <TextView
+                android:id="@android:id/text1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#5D4037"
+                android:singleLine="true"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_note_icon" />
+
+            <!-- 分类标签 -->
+            <TextView
+                android:id="@+id/category_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:padding="6dp"
+                android:layout_marginStart="8dp" />
+
+        </LinearLayout>
+
+        <!-- 时间戳行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_time_icon"
+                android:tint="#795548" />
+
+            <TextView
+                android:id="@+id/timestamp_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="#795548"
+                android:layout_marginStart="4dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+```
+
+### 4. 应用图标和菜单图标更新
+(1) 应用主题配置
+```xml
+<!-- res/values/themes.xml -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.NotePad" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">#5D4037</item>
+        <item name="colorPrimaryVariant">#3E2723</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">#FF9800</item>
+        <item name="colorSecondaryVariant">#F57C00</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="android:statusBarColor">#3E2723</item>
+        <item name="android:windowBackground">#FFF5E6C2</item>
+    </style>
+</resources>
+```
+
+### 5. 分类筛选界面优化
+<p><img width="367" height="294" alt="分类筛选界面" src="https://github.com/user-attachments/assets/分类筛选截图" /></p>
+
+**实现效果：**
+- 使用统一的复古配色方案（米白、棕色、橙色）
+- 所有功能按钮添加相应的emoji图标，提升视觉识别度
+- 分类筛选支持直观的图标+文字组合
+- 编辑界面采用做旧纸张效果，增强复古笔记应用体验
+- 卡片式布局配合柔和阴影，提升层次感
+- 动态分类颜色系统，每个分类有独特配色和图标
+
+**界面特点：**
+- 📁 分类选择：复古文件夹图标配合棕色主题
+- 📂 筛选功能：文件柜图标，清晰的分类筛选菜单
+- ✏️ 编辑界面：羽毛笔图标，做旧纸张背景
+- 📝 内容区域：复古边框，舒适的阅读体验
+- 🕐 时间显示：复古时钟图标，统一的设计语言
+
+整个应用实现了从功能到视觉的统一复古风格，同时保持了良好的用户体验和操作流畅性。
