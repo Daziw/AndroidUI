@@ -19,6 +19,8 @@
 ## 二、拓展基本功能
 
 ### （一）笔记条目增加时间戳显示
+<p><img width="184" height="66" alt="image" src="https://github.com/user-attachments/assets/a408484f-cc1c-4814-a199-1824937ffb24" />
+</p>
 
 #### 1. 功能要求
 每个新建笔记都会保存新建时间并显示；在修改笔记后更新为修改时间
@@ -116,8 +118,7 @@ private String formatTimestamp(long timestamp) {
 
 #### 1. 功能要求
 支持按标题和内容搜索笔记，实时显示搜索结果
-<p><img width="379" height="124" alt="image" src="https://github.com/user-attachments/assets/f3078f16-2e7f-4d07-aee5-79808176c9f2" />
-
+<p><img width="383" height="127" alt="image" src="https://github.com/user-attachments/assets/a6a588eb-89bf-4c86-92f7-315dc7a0ed69" />
 </p>
 
 #### 2. 实现思路和技术实现
@@ -166,11 +167,14 @@ searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 ### （三）笔记分类功能
 
 #### 1. 功能要求
-为笔记添加分类功能，支持按分类筛选和显示并且编辑页面也实现选择分类
-
-
+-为笔记添加分类功能
 <p><img width="367" height="294" alt="6e8189a3-2861-426a-a340-726520e11522" src="https://github.com/user-attachments/assets/a01aa7c4-1c2f-4946-8a05-e6699f9de79f" />
 </p>
+-支持按分类筛选和显示并且编辑页面实现选择分类
+<p><img width="385" height="187" alt="211d5d916a4cdad07fed49d51e8f4fe7" src="https://github.com/user-attachments/assets/bfa271ce-e56b-4723-a40a-eed4a0f5039f" /></p>
+<p><img width="359" height="399" alt="image" src="https://github.com/user-attachments/assets/697add31-32a4-4c08-89c1-21f3991f3864" /></p>
+<p><img width="388" height="136" alt="image" src="https://github.com/user-attachments/assets/647cf7f1-cb29-4b8f-9f0a-05461785dfc6" /></p>
+
 
 #### 2. 实现思路和技术实现
 (1) 在数据库中添加分类字段
@@ -329,6 +333,11 @@ private Cursor getFilteredCursor() {
 - 优化的间距和字体大小
 
 ### 2. 动态分类颜色和图标系统
+- 左侧图标跟随分类种类变化
+- 不同种类卡片颜色不同
+<p><img width="385" height="427" alt="image" src="https://github.com/user-attachments/assets/83c30d79-6c42-4fff-ae2d-9c523652e68a" />
+</p>
+
 ```java
 private void setCategoryColorAndIcon(TextView categoryView, String category) {
     int color;
@@ -544,17 +553,6 @@ private void setCategoryColorAndIcon(TextView categoryView, String category) {
 </resources>
 ```
 
-### 5. 分类筛选界面优化
-<p><img width="367" height="294" alt="分类筛选界面" src="https://github.com/user-attachments/assets/分类筛选截图" /></p>
-
-**实现效果：**
-- 使用统一的复古配色方案（米白、棕色、橙色）
-- 所有功能按钮添加相应的emoji图标，提升视觉识别度
-- 分类筛选支持直观的图标+文字组合
-- 编辑界面采用做旧纸张效果，增强复古笔记应用体验
-- 卡片式布局配合柔和阴影，提升层次感
-- 动态分类颜色系统，每个分类有独特配色和图标
-
 **界面特点：**
 - 📁 分类选择：复古文件夹图标配合棕色主题
 - 📂 筛选功能：文件柜图标，清晰的分类筛选菜单
@@ -562,4 +560,3 @@ private void setCategoryColorAndIcon(TextView categoryView, String category) {
 - 📝 内容区域：复古边框，舒适的阅读体验
 - 🕐 时间显示：复古时钟图标，统一的设计语言
 
-整个应用实现了从功能到视觉的统一复古风格，同时保持了良好的用户体验和操作流畅性。
